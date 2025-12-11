@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        tools:context=".DetailfilmActivity"
+        android:padding="15dp">
+
+        <TextView
+            android:id="@+id/titreFilm"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Détail du Film"
+            android:textSize="28sp"
+            android:textStyle="bold"
+            android:padding="10dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Description :"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:padding="10dp"
+            android:layout_marginTop="15dp" />
+
+        <TextView
+            android:id="@+id/descriptionFilm"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Description du film"
+            android:textSize="14sp"
+            android:padding="10dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Année de sortie :"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:padding="10dp"
+            android:layout_marginTop="15dp" />
+
+        <TextView
+            android:id="@+id/anneeFilm"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="2006"
+            android:textSize="14sp"
+            android:padding="10dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Durée :"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:padding="10dp"
+            android:layout_marginTop="15dp" />
+
+        <TextView
+            android:id="@+id/dureeFilm"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="86 min"
+            android:textSize="14sp"
+            android:padding="10dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Classification :"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:padding="10dp"
+            android:layout_marginTop="15dp" />
+
+        <TextView
+            android:id="@+id/ratingFilm"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="PG"
+            android:textSize="14sp"
+            android:padding="10dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Extras :"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:padding="10dp"
+            android:layout_marginTop="15dp" />
+
+        <TextView
+            android:id="@+id/extrasFilm"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Aucun"
+            android:textSize="14sp"
+            android:padding="10dp" />
+
+        <Button
+            android:id="@+id/btnCommander"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Commander ce film"
+            android:padding="15dp"
+            android:onClick="Commander_Film"
+            android:layout_marginTop="30dp" />
+
+    </LinearLayout>
+
+</ScrollView>
