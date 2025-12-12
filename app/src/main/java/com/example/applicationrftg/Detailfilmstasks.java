@@ -24,7 +24,7 @@ public class Detailfilmstasks extends AsyncTask<URL, Integer, String> {
 
     @Override
     protected String doInBackground(URL... urls) {
-        // ⚠️ Cette méthode s'exécute en ARRIÈRE-PLAN (thread parallèle)
+        // Cette méthode s'exécute en ARRIÈRE-PLAN (thread parallèle)
         String sResultatAppel = null;
         URL urlAAppeler = urls[0];
         Log.d("mydebug", ">>> doInBackground - Appel du webservice détail : " + urlAAppeler);
@@ -34,11 +34,11 @@ public class Detailfilmstasks extends AsyncTask<URL, Integer, String> {
 
     @Override
     protected void onPostExecute(String resultat) {
-        // ⚠️ Cette méthode s'exécute dans le THREAD PRINCIPAL (UI)
+        // Cette méthode s'exécute dans le THREAD PRINCIPAL (UI)
         System.out.println(">>> onPostExecute détail / resultat=" + resultat);
         Log.d("mydebug", ">>> onPostExecute - Détails reçus : " + resultat);
 
-        // 🔴 IMPORTANT : On appelle la méthode de mise à jour de l'activity
+        // IMPORTANT : On appelle la méthode de mise à jour de l'activity
         if (screen != null) {
             screen.afficherDetailFilm(resultat);
         }

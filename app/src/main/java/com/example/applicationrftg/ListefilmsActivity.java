@@ -32,14 +32,14 @@ public class ListefilmsActivity extends AppCompatActivity {
         Log.d(TAG, ">>> onCreate - Démarrage de ListefilmsActivity");
         setContentView(R.layout.activity_listefilms);
 
-        // 1️⃣ Récupérer la ListView du layout XML
+        // Récupérer la ListView du layout XML
         listeFilmsView = findViewById(R.id.listeFilms);
 
-        // 2️⃣ Créer l'adaptateur (qui va remplir la ListView)
+        // Créer l'adaptateur (qui va remplir la ListView)
         adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, films);
         listeFilmsView.setAdapter(adapter);
 
-        // 3️⃣ Ajouter un listener pour détecter les clics sur les films
+        // Ajouter un listener pour détecter les clics sur les films
         listeFilmsView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -54,7 +54,7 @@ public class ListefilmsActivity extends AppCompatActivity {
             }
         });
 
-        // 4️⃣ Appeler le webservice de façon asynchrone
+        // Appeler le webservice de façon asynchrone
         URL urlAAppeler = null;
         try {
             urlAAppeler = new URL("http://10.0.2.2:8180/films");
@@ -72,7 +72,7 @@ public class ListefilmsActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    // 5️⃣ Méthode appelée par Listefilmstasks après avoir reçu les données
+    // Méthode appelée par Listefilmstasks après avoir reçu les données
     public void afficherResultat(String resultat) {
         Log.d(TAG, ">>> Résultat reçu dans l'activité : " + resultat);
 
@@ -83,14 +83,14 @@ public class ListefilmsActivity extends AppCompatActivity {
         if (filmsRecus != null && !filmsRecus.isEmpty()) {
             films.clear();  // Vider la liste actuelle
             films.addAll(filmsRecus);  // Ajouter les nouveaux films
-            adapter.notifyDataSetChanged();  // 🔄 IMPORTANT : Dire à l'adaptateur que les données ont changé
+            adapter.notifyDataSetChanged();  // IMPORTANT : Dire à l'adaptateur que les données ont changé
             Log.d(TAG, ">>> " + films.size() + " films affichés");
         } else {
             Log.e(TAG, ">>> Aucun film reçu ou erreur de conversion");
         }
     }
 
-    // 6️⃣ Convertir le JSON en ArrayList<Film> (utilise la librairie Gson)
+    // Convertir le JSON en ArrayList<Film> (utilise la librairie Gson)
     private ArrayList<Film> convertirJsonEnFilms(String jsonFilms) {
         try {
             Gson gson = new Gson();

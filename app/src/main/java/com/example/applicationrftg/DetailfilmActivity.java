@@ -38,12 +38,12 @@ public class DetailfilmActivity extends AppCompatActivity {
 
         Log.d("mydebug", ">>> onCreate DetailfilmActivity");
 
-        // 1️⃣ Récupérer l'ID du film passé en Intent
+        // Récupérer l'ID du film passé en Intent
         Intent intent = getIntent();
         filmId = intent.getIntExtra("film_id", -1);
         Log.d("mydebug", ">>> Film ID reçu : " + filmId);
 
-        // 2️⃣ Récupérer les TextViews du layout
+        // Récupérer les TextViews du layout
         titreFilmView = findViewById(R.id.titreFilm);
         descriptionFilmView = findViewById(R.id.descriptionFilm);
         anneeFilmView = findViewById(R.id.anneeFilm);
@@ -51,7 +51,7 @@ public class DetailfilmActivity extends AppCompatActivity {
         ratingFilmView = findViewById(R.id.ratingFilm);
         extrasFilmView = findViewById(R.id.extrasFilm);
 
-        // 3️⃣ Appeler le webservice pour récupérer les détails du film
+        // Appeler le webservice pour récupérer les détails du film
         URL urlAAppeler = null;
         try {
             // Construire l'URL avec l'ID du film
@@ -62,7 +62,7 @@ public class DetailfilmActivity extends AppCompatActivity {
         }
     }
 
-    // 4️⃣ Méthode appelée par Detailfilmstasks après avoir reçu les détails
+    // Méthode appelée par Detailfilmstasks après avoir reçu les détails
     public void afficherDetailFilm(String resultat) {
         Log.d("mydebug", ">>> Détails du film reçus : " + resultat);
 
@@ -85,7 +85,7 @@ public class DetailfilmActivity extends AppCompatActivity {
         }
     }
 
-    // 5️⃣ Convertir le JSON en objet Film (utilise la librairie Gson)
+    // Convertir le JSON en objet Film (utilise la librairie Gson)
     private Film convertirJsonEnFilm(String jsonFilm) {
         try {
             Gson gson = new Gson();
@@ -99,7 +99,7 @@ public class DetailfilmActivity extends AppCompatActivity {
         }
     }
 
-    // 6️⃣ Quand on clique sur "Commander ce film"
+    // Quand on clique sur "Commander ce film"
     public void Commander_Film(View view) {
         if (filmActuel == null) {
             Log.e("mydebug", ">>> Erreur : filmActuel est null");
@@ -118,18 +118,9 @@ public class DetailfilmActivity extends AppCompatActivity {
                          "Vous avez " + panierManager.getNombreArticles() + " film(s) dans votre panier.";
 
         afficherPopupCommande(message);
-
-        // Optionnel : Appeler aussi le webservice si nécessaire
-        // URL urlAAppeler = null;
-        // try {
-        //     urlAAppeler = new URL("http://10.0.2.2:8180/commander/" + filmId);
-        //     new Commanderfilmtasks(this).execute(urlAAppeler);
-        // } catch (MalformedURLException mue) {
-        //     Log.e("mydebug", ">>> MalformedURLException : " + mue.toString());
-        // }
     }
 
-    // 7️⃣ Afficher la pop-up de confirmation
+    // Afficher la pop-up de confirmation
     public void afficherPopupCommande(String message) {
         Log.d("mydebug", ">>> Affichage de la pop-up : " + message);
 
