@@ -57,7 +57,7 @@ public class ListefilmsActivity extends AppCompatActivity {
         // Appeler le webservice de façon asynchrone
         URL urlAAppeler = null;
         try {
-            urlAAppeler = new URL("http://10.0.2.2:8180/films");
+            urlAAppeler = new URL(UrlManager.getURLConnexion() + "/films");
             new Listefilmstasks(this).execute(urlAAppeler);
         } catch (MalformedURLException mue) {
             Log.e(TAG, ">>> onCreate - MalformedURLException : " + mue.toString());

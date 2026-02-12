@@ -71,28 +71,32 @@ public class PanierManager {
     }
 
     /**
-     * Ajoute un film au panier
-     * Si le film existe déjà, augmente la quantité
+     * Ajoute un film au panier (chaque copie = un item séparé)
      */
     public void ajouterFilm(Film film) {
         List<PanierItem> articlesPanier = getArticlesPanier();
 
-        // Vérifier si le film existe déjà dans le panier
-        boolean filmExiste = false;
-        for (PanierItem item : articlesPanier) {
-            if (item.getFilm().getFilmId() == film.getFilmId()) {
-                item.incrementerQuantite();
-                filmExiste = true;
-                Log.d("PanierManager", "Film déjà dans le panier, quantité augmentée : " + film.getTitle());
+        PanierItem nouvelItem = new PanierItem(film, 1);
+        articlesPanier.add(nouvelItem);
+        Log.d("PanierManager", "Film ajouté au panier : " + film.getTitle());
+
+        sauvegarderPanier(articlesPanier);
+    }
+
+    /**
+     * Décrémente la quantité d'un film de 1, et supprime l'item si la quantité atteint 0
+     */
+    public void decrementerFilm(int filmId) {
+        List<PanierItem> articlesPanier = getArticlesPanier();
+
+        for (int i = 0; i < articlesPanier.size(); i++) {
+            if (articlesPanier.get(i).getFilm().getFilmId() == filmId) {
+                articlesPanier.get(i).decrementerQuantite();
+                if (articlesPanier.get(i).getQuantite() <= 0) {
+                    articlesPanier.remove(i);
+                }
                 break;
             }
-        }
-
-        // Si le film n'existe pas, l'ajouter
-        if (!filmExiste) {
-            PanierItem nouvelItem = new PanierItem(film, 1);
-            articlesPanier.add(nouvelItem);
-            Log.d("PanierManager", "Nouveau film ajouté au panier : " + film.getTitle());
         }
 
         sauvegarderPanier(articlesPanier);

@@ -7,14 +7,30 @@
     android:background="#FAFAFA"
     tools:context=".PanierActivity">
 
-    <TextView
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Mon Panier"
-        android:textSize="28sp"
-        android:textStyle="bold"
-        android:textColor="#000000"
-        android:padding="15dp" />
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:padding="15dp">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Mon Panier"
+            android:textSize="28sp"
+            android:textStyle="bold"
+            android:textColor="#000000" />
+
+        <Button
+            android:id="@+id/btnRetourListePanier"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Voir les films"
+            android:onClick="retourListeFilms" />
+
+    </LinearLayout>
 
     <TextView
         android:id="@+id/textePanierVide"

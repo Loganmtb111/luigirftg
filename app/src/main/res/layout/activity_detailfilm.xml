@@ -37,73 +37,107 @@
             android:textSize="14sp"
             android:padding="10dp" />
 
-        <TextView
+        <GridLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Année de sortie :"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            android:padding="10dp"
-            android:layout_marginTop="15dp" />
+            android:columnCount="2"
+            android:layout_marginTop="15dp">
 
-        <TextView
-            android:id="@+id/anneeFilm"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="2006"
-            android:textSize="14sp"
-            android:padding="10dp" />
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_columnWeight="1"
+                android:orientation="vertical"
+                android:padding="5dp">
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Durée :"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            android:padding="10dp"
-            android:layout_marginTop="15dp" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Année de sortie :"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
 
-        <TextView
-            android:id="@+id/dureeFilm"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="86 min"
-            android:textSize="14sp"
-            android:padding="10dp" />
+                <TextView
+                    android:id="@+id/anneeFilm"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="2006"
+                    android:textSize="14sp"
+                    android:layout_marginTop="5dp" />
+            </LinearLayout>
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Classification :"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            android:padding="10dp"
-            android:layout_marginTop="15dp" />
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_columnWeight="1"
+                android:orientation="vertical"
+                android:padding="5dp">
 
-        <TextView
-            android:id="@+id/ratingFilm"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="PG"
-            android:textSize="14sp"
-            android:padding="10dp" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Durée :"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Extras :"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            android:padding="10dp"
-            android:layout_marginTop="15dp" />
+                <TextView
+                    android:id="@+id/dureeFilm"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="86 min"
+                    android:textSize="14sp"
+                    android:layout_marginTop="5dp" />
+            </LinearLayout>
 
-        <TextView
-            android:id="@+id/extrasFilm"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Aucun"
-            android:textSize="14sp"
-            android:padding="10dp" />
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_columnWeight="1"
+                android:orientation="vertical"
+                android:padding="5dp"
+                android:layout_marginTop="10dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Classification :"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/ratingFilm"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="PG"
+                    android:textSize="14sp"
+                    android:layout_marginTop="5dp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_columnWeight="1"
+                android:orientation="vertical"
+                android:padding="5dp"
+                android:layout_marginTop="10dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Extras :"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/extrasFilm"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Aucun"
+                    android:textSize="14sp"
+                    android:layout_marginTop="5dp" />
+            </LinearLayout>
+
+        </GridLayout>
 
         <Button
             android:id="@+id/btnCommander"
@@ -113,6 +147,15 @@
             android:padding="15dp"
             android:onClick="Commander_Film"
             android:layout_marginTop="30dp" />
+
+        <Button
+            android:id="@+id/btnRetourListe"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Retour à la liste"
+            android:padding="15dp"
+            android:onClick="retourListe"
+            android:layout_marginTop="10dp" />
 
     </LinearLayout>
 

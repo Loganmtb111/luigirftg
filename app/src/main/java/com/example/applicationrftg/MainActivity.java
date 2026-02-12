@@ -2,78 +2,117 @@ package com.example.applicationrftg;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.Toast;
 
-import java.io.File;
-import java.security.MessageDigest;
-import java.util.ArrayList;
+import org.json.JSONObject;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
+
+    private String[] listeURLs;
+    private EditText editTextURL;
+    private EditText editTextLogin;
+    private EditText editTextPassword;
+    private Button buttonLogin;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-    }
-    public void Ouvrir_Liste(View view) {
-        // Récupération des champs email et password
-        EditText editTextEmail = findViewById(R.id.editTextUsername);
-        EditText editTextPassword = findViewById(R.id.editTextPassword);
 
-        String email = editTextEmail.getText().toString().trim();
+        // Récupérer les références des vues
+        editTextLogin = findViewById(R.id.editTextUsername);
+        editTextPassword = findViewById(R.id.editTextPassword);
+        editTextURL = findViewById(R.id.editTextURL);
+        buttonLogin = findViewById(R.id.button);
+
+        // Configuration du Spinner
+        listeURLs = getResources().getStringArray(R.array.listeURLs);
+        Spinner spinnerURLs = findViewById(R.id.spinnerURLs);
+        spinnerURLs.setOnItemSelectedListener(this);
+        ArrayAdapter<CharSequence> adapterListeURLs = ArrayAdapter.createFromResource(
+                this, R.array.listeURLs, android.R.layout.simple_spinner_item);
+        adapterListeURLs.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerURLs.setAdapter(adapterListeURLs);
+
+        buttonLogin.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                seConnecter();
+            }
+        });
+    }
+
+    @Override
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+        editTextURL.setText(listeURLs[position]);
+        UrlManager.setURLConnexion(listeURLs[position]);
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> parent) {
+    }
+
+    private void seConnecter() {
+        String email = editTextLogin.getText().toString().trim();
         String password = editTextPassword.getText().toString().trim();
 
-        // Vérification que les champs ne sont pas vides
-        if (email.isEmpty() || password.isEmpty()) {
-            Toast.makeText(this, "Veuillez remplir tous les champs", Toast.LENGTH_SHORT).show();
+        // Sauvegarder l'URL saisie manuellement
+        String urlSaisie = editTextURL.getText().toString().trim();
+        if (!urlSaisie.isEmpty()) {
+            UrlManager.setURLConnexion(urlSaisie);
+        }
+
+        if (email.isEmpty()) {
+            Toast.makeText(this, "Veuillez saisir un email", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        // Lancement de la tâche asynchrone pour vérifier les identifiants
-        // Le password est envoyé en clair, l'API le cryptera côté serveur
-        VerifyLoginTask task = new VerifyLoginTask(this);
-        task.execute(email, password);
-    }
-
-    // Méthode appelée par VerifyLoginTask après vérification
-    public void onLoginResult(int customerId) {
-        if (customerId != -1) {
-            // Connexion réussie
-            Toast.makeText(this, "Connexion réussie ! Customer ID: " + customerId, Toast.LENGTH_SHORT).show();
-            Intent intent = new Intent(this, ListefilmsActivity.class);
-            startActivity(intent);
-        } else {
-            // Connexion échouée
-            Toast.makeText(this, "Email ou mot de passe incorrect", Toast.LENGTH_LONG).show();
+        if (password.isEmpty()) {
+            Toast.makeText(this, "Veuillez saisir un mot de passe", Toast.LENGTH_SHORT).show();
+            return;
         }
+
+        Log.d("mydebug", "Connexion sur: " + UrlManager.getURLConnexion());
+        new ConnexionTask(this).execute(email, password);
     }
 
-    // ENCRYPTAGE EN MD5
-    private String encrypterChaineMD5(String chaine) {
-        byte[] chaineBytes = chaine.getBytes();
-        byte[] hash = null;
+    public void onConnexionTerminee(String resultat) {
+        Log.d("mydebug", "Résultat connexion JSON: " + resultat);
+
         try {
-            hash = MessageDigest.getInstance("MD5").digest(chaineBytes);
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-        }
-        StringBuffer hashString = new StringBuffer();
-        for (int i=0; i<hash.length; ++i ) {
-            String hex = Integer.toHexString(hash[i]);
-            if (hex.length() == 1) {
-                hashString.append('0');
-                hashString.append(hex.charAt(hex.length()-1));
+            JSONObject jsonResponse = new JSONObject(resultat);
+            int customerId = jsonResponse.getInt("customerId");
+
+            if (customerId > 0) {
+                // Sauvegarder le customerId dans SharedPreferences
+                SharedPreferences prefs = getSharedPreferences("UserSession", MODE_PRIVATE);
+                prefs.edit().putInt("customerId", customerId).apply();
+
+                Toast.makeText(this, "Connexion réussie !", Toast.LENGTH_SHORT).show();
+                ouvrirPage(null);
+            } else {
+                Toast.makeText(this, "Email ou mot de passe incorrect", Toast.LENGTH_LONG).show();
+                editTextPassword.setText("");
             }
-            else {
-                hashString.append(hex.substring(hex.length()-2));
-            }
+
+        } catch (Exception e) {
+            Log.e("mydebug", "Erreur parsing JSON connexion: " + e.toString());
+            Toast.makeText(this, "Erreur de connexion au serveur", Toast.LENGTH_LONG).show();
         }
-        return hashString.toString();
+    }
+
+    public void ouvrirPage(View view) {
+        Intent intent = new Intent(MainActivity.this, ListefilmsActivity.class);
+        startActivity(intent);
     }
 }

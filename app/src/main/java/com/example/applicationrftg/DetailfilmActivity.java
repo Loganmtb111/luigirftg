@@ -2,6 +2,7 @@ package com.example.applicationrftg;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
@@ -19,7 +20,7 @@ import com.google.gson.Gson;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-public class DetailfilmActivity extends AppCompatActivity {
+public class DetailfilmActivity extends AppCompatActivity implements AddToCartTask.AddToCartCallback {
 
     private int filmId;
     private TextView titreFilmView;
@@ -55,7 +56,7 @@ public class DetailfilmActivity extends AppCompatActivity {
         URL urlAAppeler = null;
         try {
             // Construire l'URL avec l'ID du film
-            urlAAppeler = new URL("http://10.0.2.2:8180/films/" + filmId);
+            urlAAppeler = new URL(UrlManager.getURLConnexion() + "/films/" + filmId);
             new Detailfilmstasks(this).execute(urlAAppeler);
         } catch (MalformedURLException mue) {
             Log.e("mydebug", ">>> MalformedURLException : " + mue.toString());
@@ -109,15 +110,46 @@ public class DetailfilmActivity extends AppCompatActivity {
 
         Log.d("mydebug", ">>> Clic sur Commander - Film : " + filmActuel.getTitle());
 
+        // Recuperer le customerId depuis SharedPreferences
+        SharedPreferences prefs = getSharedPreferences("UserSession", MODE_PRIVATE);
+        int customerId = prefs.getInt("customerId", -1);
+
+        if (customerId == -1) {
+            Log.e("mydebug", ">>> Erreur : customerId non trouve");
+            afficherPopupCommande("Erreur : vous devez etre connecte pour commander");
+            return;
+        }
+
+        Log.d("mydebug", ">>> CustomerId recupere : " + customerId);
+
         // Ajouter le film au panier local
         PanierManager panierManager = PanierManager.getInstance(this);
         panierManager.ajouterFilm(filmActuel);
 
-        // Afficher un message de confirmation
-        String message = "Le film \"" + filmActuel.getTitle() + "\" a été ajouté au panier !\n\n" +
-                         "Vous avez " + panierManager.getNombreArticles() + " film(s) dans votre panier.";
+        // Appeler l'API pour creer la location
+        AddToCartTask task = new AddToCartTask(this);
+        task.execute(filmId, customerId);
+    }
 
-        afficherPopupCommande(message);
+    // Callback quand l'ajout au panier API reussit
+    @Override
+    public void onSuccess(String message) {
+        Log.d("mydebug", ">>> API Success : " + message);
+        PanierManager panierManager = PanierManager.getInstance(this);
+        String fullMessage = "Le film \"" + filmActuel.getTitle() + "\" a ete ajoute au panier !\n\n" +
+                "Location creee avec succes.\n\n" +
+                "Vous avez " + panierManager.getNombreArticles() + " film(s) dans votre panier.";
+        afficherPopupCommande(fullMessage);
+    }
+
+    // Callback quand l'ajout au panier API echoue
+    @Override
+    public void onError(String error) {
+        Log.e("mydebug", ">>> API Error : " + error);
+        // Retirer du panier local car l'API a echoue
+        PanierManager panierManager = PanierManager.getInstance(this);
+        panierManager.decrementerFilm(filmActuel.getFilmId());
+        afficherPopupCommande("Erreur : " + error);
     }
 
     // Afficher la pop-up de confirmation
@@ -153,5 +185,11 @@ public class DetailfilmActivity extends AppCompatActivity {
                 popupWindow.dismiss();
             }
         });
+    }
+
+    // Retourner à la liste des films
+    public void retourListe(View view) {
+        Intent intent = new Intent(this, ListefilmsActivity.class);
+        startActivity(intent);
     }
 }

@@ -24,6 +24,7 @@ public class PanierAdapter extends BaseAdapter {
     // Interface pour notifier l'activité des changements
     public interface OnPanierChangeListener {
         void onPanierChange();
+        void onSupprimerFilm(int filmId);
     }
 
     public PanierAdapter(Context context, List<PanierItem> articlesPanier, OnPanierChangeListener listener) {
@@ -88,7 +89,7 @@ public class PanierAdapter extends BaseAdapter {
             public void onClick(View v) {
                 Log.d("PanierAdapter", "Suppression du film : " + film.getTitle());
 
-                // Supprimer l'article du panier
+                // Supprimer l'article du panier local
                 panierManager.supprimerFilm(film.getFilmId());
 
                 // Mettre à jour la liste
@@ -98,6 +99,8 @@ public class PanierAdapter extends BaseAdapter {
                 notifyDataSetChanged();
                 if (listener != null) {
                     listener.onPanierChange();
+                    // Appeler l'API pour supprimer de la base de donnees
+                    listener.onSupprimerFilm(film.getFilmId());
                 }
             }
         });

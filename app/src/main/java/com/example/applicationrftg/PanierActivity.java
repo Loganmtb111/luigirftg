@@ -1,6 +1,8 @@
 package com.example.applicationrftg;
 
 import androidx.appcompat.app.AppCompatActivity;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -11,7 +13,7 @@ import android.widget.Toast;
 
 import java.util.List;
 
-public class PanierActivity extends AppCompatActivity implements PanierAdapter.OnPanierChangeListener {
+public class PanierActivity extends AppCompatActivity implements PanierAdapter.OnPanierChangeListener, CheckoutTask.CheckoutCallback, RemoveFromCartTask.RemoveFromCartCallback {
 
     private ListView listePanier;
     private TextView textePanierVide;
@@ -104,7 +106,7 @@ public class PanierActivity extends AppCompatActivity implements PanierAdapter.O
     }
 
     /**
-     * Valide la commande
+     * Valide la commande - appelle l'API pour passer status de 2 a 3
      */
     private void validerCommande() {
         if (panierManager.estVide()) {
@@ -112,17 +114,69 @@ public class PanierActivity extends AppCompatActivity implements PanierAdapter.O
             return;
         }
 
-        int nbArticles = panierManager.getNombreArticles();
+        // Recuperer le customerId depuis SharedPreferences
+        SharedPreferences prefs = getSharedPreferences("UserSession", MODE_PRIVATE);
+        int customerId = prefs.getInt("customerId", -1);
 
-        Log.d("mydebug", ">>> Validation de la commande : " + nbArticles + " article(s)");
+        if (customerId == -1) {
+            Toast.makeText(this, "Erreur : vous devez etre connecte", Toast.LENGTH_SHORT).show();
+            return;
+        }
 
-        // Afficher un message de confirmation
-        String message = "Commande validée !\n" + nbArticles + " film(s) commandé(s)";
+        Log.d("mydebug", ">>> Validation de la commande pour customerId: " + customerId);
+
+        // Appeler l'API /cart/checkout
+        new CheckoutTask(this).execute(customerId);
+    }
+
+    // Callback quand le checkout reussit
+    @Override
+    public void onCheckoutSuccess(int itemsCount) {
+        Log.d("mydebug", ">>> Checkout reussi : " + itemsCount + " article(s)");
+
+        String message = "Commande validee !\n" + itemsCount + " film(s) commande(s)";
         Toast.makeText(this, message, Toast.LENGTH_LONG).show();
 
-        // Vider le panier après validation
+        // Vider le panier local apres validation
         panierManager.viderPanier();
         chargerPanier();
+    }
+
+    // Callback quand le checkout echoue
+    @Override
+    public void onCheckoutError(String error) {
+        Log.e("mydebug", ">>> Checkout echoue : " + error);
+        Toast.makeText(this, "Erreur : " + error, Toast.LENGTH_LONG).show();
+    }
+
+    /**
+     * Appelée quand on supprime un film du panier - appelle l'API pour supprimer de la BDD
+     */
+    @Override
+    public void onSupprimerFilm(int filmId) {
+        SharedPreferences prefs = getSharedPreferences("UserSession", MODE_PRIVATE);
+        int customerId = prefs.getInt("customerId", -1);
+
+        if (customerId == -1) {
+            Log.e("mydebug", ">>> Erreur : customerId non trouve pour suppression");
+            return;
+        }
+
+        Log.d("mydebug", ">>> Suppression API du film ID " + filmId + " pour customerId " + customerId);
+        new RemoveFromCartTask(this).execute(filmId, customerId);
+    }
+
+    // Callback quand la suppression API reussit
+    @Override
+    public void onRemoveSuccess(String message) {
+        Log.d("mydebug", ">>> Suppression API reussie : " + message);
+    }
+
+    // Callback quand la suppression API echoue
+    @Override
+    public void onRemoveError(String error) {
+        Log.e("mydebug", ">>> Suppression API echouee : " + error);
+        Toast.makeText(this, "Erreur suppression serveur : " + error, Toast.LENGTH_SHORT).show();
     }
 
     /**
@@ -140,5 +194,13 @@ public class PanierActivity extends AppCompatActivity implements PanierAdapter.O
         chargerPanier();
 
         Toast.makeText(this, "Le panier a été vidé", Toast.LENGTH_SHORT).show();
+    }
+
+    /**
+     * Retourne à la liste des films
+     **/
+    public void retourListeFilms(View view) {
+        Intent intent = new Intent(this, ListefilmsActivity.class);
+        startActivity(intent);
     }
 }
